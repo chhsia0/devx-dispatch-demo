@@ -26,7 +26,7 @@ task "unit-test": {
       env: [
         {
           name: "SLEEP_DURATION"
-          value: "10s"
+          value: "5s"
         }
       ]
     }
@@ -69,7 +69,7 @@ task "integration-test": {
       env: [
         {
           name: "SLEEP_DURATION"
-          value: "10s"
+          value: "5s"
         }
       ]
     }
