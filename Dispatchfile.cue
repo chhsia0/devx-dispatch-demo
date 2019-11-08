@@ -16,7 +16,6 @@ resource "docker-image": {
 
 task "unit-test": {
   inputs: ["src-repo"]
-
   steps: [
     {
       name: "go-test"
@@ -37,7 +36,6 @@ task "build-image": {
   inputs: ["src-repo"]
   outputs: ["docker-image"]
   deps: ["unit-test"]
-
   steps: [
     {
       name: "build-and-push"
@@ -60,7 +58,6 @@ task "build-image": {
 
 task "integration-test": {
   inputs: ["docker-image"]
-
   steps:[
     {
       name: "run-test"
@@ -79,7 +76,6 @@ task "integration-test": {
 task "deploy": {
   inputs: ["docker-image", "gitops-repo"]
   deps: ["integration-test"]
-
   steps: [
     {
       name: "update-gitops-repo"
