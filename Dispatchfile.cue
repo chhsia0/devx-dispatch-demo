@@ -11,7 +11,7 @@ resource "gitops-repo": {
 
 resource "docker-image": {
   type: "image"
-  param url: "mesosphere/devx-dispatch-demo"
+  param url: "gcr.io/massive-bliss-781/devx-dispatch-demo"
 }
 
 task "unit-test": {
