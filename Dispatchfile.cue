@@ -55,7 +55,7 @@ task "build-image": {
     {
       name: "gcloud-auth"
       secret: {
-        secretName: "chhsiao-gcloud-auth"
+        secretName: "devx-gcloud-auth"
       }
     }
   ]
@@ -88,7 +88,7 @@ task "deploy": {
       args: [
         "auth",
         "activate-service-account",
-        "chhsiao-onprem-sa@massive-bliss-781.iam.gserviceaccount.com",
+        "devx-onprem-sa@massive-bliss-781.iam.gserviceaccount.com",
         "--key-file=/builder/volumes/gcloud-auth/key.json",
         "--quiet"
       ]
@@ -112,7 +112,7 @@ task "deploy": {
     {
       name: "gcloud-auth"
       secret: {
-        secretName: "chhsiao-gcloud-auth"
+        secretName: "devx-gcloud-auth"
       }
     }
   ]
