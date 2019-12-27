@@ -100,7 +100,7 @@ task "deploy": {
         "deploy",
         "devx-dispatch-demo",
         "--project=massive-bliss-781",
-        "--image=$(inputs.resources.gcr-image.url)@$(inputs.resources.gcr-image.digest)"
+        "--image=$(inputs.resources.gcr-image.url)@$(inputs.resources.gcr-image.digest)",
         "--region=us-central1",
         "--platform=managed",
         "--quiet"
