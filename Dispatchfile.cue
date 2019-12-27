@@ -88,7 +88,6 @@ task "deploy": {
       args: [
         "auth",
         "activate-service-account",
-        "devx-dispatch-demo@massive-bliss-781.iam.gserviceaccount.com",
         "--key-file=/builder/volumes/gcloud-auth/key.json",
         "--quiet"
       ]
@@ -101,7 +100,7 @@ task "deploy": {
         "deploy",
         "devx-dispatch-demo",
         "--project=massive-bliss-781",
-        "--image=gcr.io/massive-bliss-781/devx-dispatch-demo",
+        "--image=$(inputs.resources.gcr-image.url)@$(inputs.resources.gcr-image.digest)"
         "--region=us-central1",
         "--platform=managed",
         "--quiet"
