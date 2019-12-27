@@ -127,8 +127,6 @@ actions: [
   },
   {
     tasks: ["integration-test"]
-    on pull_request: {
-      chatops: ["test"]
-    }
+    on pull_request: {}
   }
 ]
