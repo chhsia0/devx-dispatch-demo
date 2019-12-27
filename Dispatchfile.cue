@@ -4,12 +4,7 @@ resource "src-repo": {
   param revision: "$(context.git.commit)"
 }
 
-resource "gitops-repo": {
-  type: "git"
-  param url: "https://github.com/mesosphere/devx-dispatch-gitops-demo"
-}
-
-resource "docker-image": {
+resource "gcr-image": {
   type: "image"
   param url: "gcr.io/massive-bliss-781/devx-dispatch-demo"
 }
@@ -34,34 +29,44 @@ task "unit-test": {
 
 task "build-image": {
   inputs: ["src-repo"]
-  outputs: ["docker-image"]
+  outputs: ["gcr-image"]
   deps: ["unit-test"]
   steps: [
     {
       name: "build-and-push"
       image: "gcr.io/kaniko-project/executor"
       args: [
-        "--destination=$(outputs.resources.docker-image.url)",
+        "--destination=$(outputs.resources.gcr-image.url)",
         "--context=/workspace/src-repo",
-        "--oci-layout-path=/builder/home/image-outputs/docker-image",
-        "--dockerfile=/workspace/src-repo/Dockerfile"
-      ],
+        "--oci-layout-path=/builder/home/image-outputs/gcr-image",
+        "--dockerfile=/workspace/src-repo/Dockerfile",
+        "--cache=true",
+        "--cache-ttl=10h"
+      ]
       env: [
         {
-          name: "DOCKER_CONFIG"
-          value: "/builder/home/.docker"
+          name: "GOOGLE_APPLICATION_CREDENTIALS"
+          value: "/builder/volumes/gcloud-auth/key.json"
         }
       ]
+    }
+  ]
+  volumes: [
+    {
+      name: "gcloud-auth"
+      secret: {
+        secretName: "chhsiao-gcloud-auth"
+      }
     }
   ]
 }
 
 task "integration-test": {
-  inputs: ["docker-image"]
+  inputs: ["gcr-image"]
   steps:[
     {
       name: "run-test"
-      image: "$(inputs.resources.docker-image.url)@$(inputs.resources.docker-image.digest)"
+      image: "$(inputs.resources.gcr-image.url)@$(inputs.resources.gcr-image.digest)"
       command: ["/hello-app.test"]
       env: [
         {
@@ -74,17 +79,41 @@ task "integration-test": {
 }
 
 task "deploy": {
-  inputs: ["docker-image", "gitops-repo"]
+  inputs: ["gcr-image"]
   deps: ["integration-test"]
   steps: [
     {
-      name: "update-gitops-repo"
-      image: "mesosphere/update-gitops-repo:v1.0"
-      workingDir: "/workspace/gitops-repo"
+      name: "gcloud-auth-sa"
+      image: "gcr.io/cloud-builders/gcloud"
       args: [
-        "-git-revision=$(context.git.commit)",
-        "-substitute=imageName=$(inputs.resources.docker-image.url)@$(inputs.resources.docker-image.digest)"
+        "auth",
+        "activate-service-account",
+        "chhsiao-onprem-sa@massive-bliss-781.iam.gserviceaccount.com",
+        "--key-file=/builder/volumes/gcloud-auth/key.json",
+        "--quiet"
       ]
+    },
+    {
+      name: "gcloud-run"
+      image: "gcr.io/cloud-builders/gcloud"
+      args: [
+        "run",
+        "deploy",
+        "devx-dispatch-demo",
+        "--project=massive-bliss-781",
+        "--image=gcr.io/massive-bliss-781/devx-dispatch-demo",
+        "--region=us-central1",
+        "--platform=managed",
+        "--quiet"
+      ]
+    }
+  ]
+  volumes: [
+    {
+      name: "gcloud-auth"
+      secret: {
+        secretName: "chhsiao-gcloud-auth"
+      }
     }
   ]
 }
@@ -93,7 +122,7 @@ actions: [
   {
     tasks: ["deploy"]
     on push: {
-      branches: ["master"]
+      branches: ["gcloud"]
     }
   },
   {
