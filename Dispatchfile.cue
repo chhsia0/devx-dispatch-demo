@@ -36,7 +36,7 @@ task "build-image": {
       name: "build-and-push"
       image: "gcr.io/kaniko-project/executor"
       args: [
-        "--destination=$(outputs.resources.gcr-image.url)",
+        "--destination=$(outputs.resources.gcr-image.url):$(context.build.name)",
         "--context=/workspace/src-repo",
         "--oci-layout-path=/builder/home/image-outputs/gcr-image",
         "--dockerfile=/workspace/src-repo/Dockerfile",
@@ -88,7 +88,7 @@ task "deploy": {
       args: [
         "auth",
         "activate-service-account",
-        "devx-onprem-sa@massive-bliss-781.iam.gserviceaccount.com",
+        "devx-dispatch-demo@massive-bliss-781.iam.gserviceaccount.com",
         "--key-file=/builder/volumes/gcloud-auth/key.json",
         "--quiet"
       ]
