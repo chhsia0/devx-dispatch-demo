@@ -39,9 +39,7 @@ task "build-image": {
         "--destination=$(outputs.resources.docker-image.url):$(context.build.name)",
         "--context=/workspace/src-repo",
         "--oci-layout-path=/workspace/output/docker-image",
-        "--dockerfile=/workspace/src-repo/Dockerfile",
-        "--cache=true",
-        "--cache-ttl=10h"
+        "--dockerfile=/workspace/src-repo/Dockerfile"
       ]
     }
   ]
