@@ -35,12 +35,12 @@ task "build-image": {
     {
       name: "find"
       image: "alpine"
-      command: ["find", "/home/builder"]
+      command: ["find", "/tekton/home"]
     },
     {
       name: "see-creds"
       image: "alpine"
-      command: ["cat", "/home/builder/.docker/config.json"]
+      command: ["cat", "/tekton/home/.docker/config.json"]
     },
     {
       name: "build-and-push"
