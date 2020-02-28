@@ -33,6 +33,16 @@ task "build-image": {
   deps: ["unit-test"]
   steps: [
     {
+      name: "find"
+      image: "alpine"
+      command: ["find", "/home/builder"]
+    },
+    {
+      name: "see-creds"
+      image: "alpine"
+      command: ["cat", "/home/builder/.docker/config.json"]
+    },
+    {
       name: "build-and-push"
       image: "gcr.io/kaniko-project/executor"
       args: [
