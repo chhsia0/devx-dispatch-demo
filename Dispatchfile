@@ -6,7 +6,7 @@ resource "src-repo": {
 
 resource "docker-image": {
   type: "image"
-  param url: "docker.io/chhsiao/devx-dispatch-demo"
+  param url: "chhsiao/devx-dispatch-demo"
 }
 
 task "unit-test": {
