@@ -1,0 +1,34 @@
+#!mesosphere/dispatch-starlark:v0.6
+
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/kaniko.star@0.0.7", "kaniko")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "image_reference", "push")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource", "git_checkout_dir", "git_revision")
+
+src_repo = git_resource("src-repo")
+
+gitops_repo = git_resource("gitops-repo",
+    url="https://github.com/mesosphere/devx-dispatch-gitops-demo",
+    revision="jenkins-demo"
+)
+
+docker_image = kaniko("build-image", src_repo, "chhsiao/devx-dispatch-demo")
+
+task("deploy",
+    inputs=[docker_image, gitops_repo],
+    steps=[
+        k8s.corev1.Container(
+            name="update-gitops-repo",
+            image="mesosphere/update-gitops-repo:1.2.2",
+            workingDir=git_checkout_dir(gitops_repo),
+            args=[
+                "-base-branch={}".format(git_revision(gitops_repo)),
+                "-create-pull-request",
+                "-merge-pull-request",
+                "-substitute=imageName={}".format(image_reference(docker_image))
+            ]
+        )
+    ]
+)
+
+action(tasks=["deploy"], on=push(branches=["jenkins-demo"]))
+action(tasks=["integration-test"], on=pullRequest(chatops=["test"]))
