@@ -1,6 +1,6 @@
 #!mesosphere/dispatch-starlark:v0.6
 
-load("github.com/mesosphere/dispatch-catalog/starlark/stable/kaniko.star@0.0.7", "kaniko")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/kaniko@0.0.7", "kaniko")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "image_reference", "push")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource", "git_checkout_dir", "git_revision")
 
