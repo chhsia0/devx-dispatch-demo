@@ -7,7 +7,7 @@ load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_re
 src_repo = git_resource("src-repo")
 
 gitops_repo = git_resource("gitops-repo",
-    url="https://github.com/mesosphere/devx-dispatch-gitops-demo",
+    url="https://github.com/chhsia0/devx-dispatch-gitops-demo",
     revision="jenkins-demo"
 )
 
