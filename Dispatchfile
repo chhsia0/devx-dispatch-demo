@@ -14,13 +14,14 @@ gitops_repo = git_resource("gitops-repo",
 docker_image = kaniko("build-image", src_repo, "chhsiao/devx-dispatch-demo")
 
 task("deploy",
-    inputs=[docker_image, gitops_repo],
+    inputs=[src_repo, docker_image, gitops_repo],
     steps=[
         k8s.corev1.Container(
             name="update-gitops-repo",
             image="mesosphere/update-gitops-repo:1.2.2",
             workingDir=git_checkout_dir(gitops_repo),
             args=[
+                "-git-revision={}".format(git_revision(src_repo)),
                 "-base-branch={}".format(git_revision(gitops_repo)),
                 "-create-pull-request",
                 "-merge-pull-request",
