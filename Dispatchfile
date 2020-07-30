@@ -31,4 +31,3 @@ task("deploy",
 )
 
 action(tasks=["deploy"], on=push(branches=["jenkins-demo"]))
-action(tasks=["integration-test"], on=pullRequest(chatops=["test"]))
