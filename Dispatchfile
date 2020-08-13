@@ -57,13 +57,13 @@ task("run-jenkins",
                 echo $location
                 executable=$(
                     while ! curl -s -u $USERNAME:$PASSWORD $location |
-                         jq -r -e '.executable.url'; do
+                         jq -r -e '.executable.url' > /dev/null; do
                          sleep 1
                     done
                 )
                 echo $executable
                 while curl -s -u $USERNAME:$PASSWORD $executable/api/json |
-                    jq -e .building; do
+                    jq -e .building > /dev/null; do
                     sleep 1
                 done
                 curl -s -u $USERNAME:$PASSWORD $executable/api/json | jq .
