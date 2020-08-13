@@ -37,4 +37,4 @@ task("deploy",
     ]
 )
 
-action(tasks=["wait-deploy"], on=push(branches=["jenkins-demo"]))
+action(tasks=["deploy"], on=push(branches=["jenkins-demo"]))
