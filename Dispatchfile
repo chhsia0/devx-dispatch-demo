@@ -32,7 +32,7 @@ task("deploy",
             name="wait-for-deployment",
             image="lachlanevenson/k8s-kubectl:latest",
             args=[
-                "get",
+                "describe",
                 "application/jenkins-demo",
                 "--namespace=dispatch"
             ]
