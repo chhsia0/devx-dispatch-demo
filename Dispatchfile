@@ -2,7 +2,7 @@
 
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/k8s@0.0.7", "secret_var")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/kaniko@0.0.7", "kaniko")
-load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "image_reference", "push")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "image_reference", "storage_resource", "push")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource", "git_checkout_dir", "git_revision")
 
 src_repo = git_resource("src-repo")
@@ -43,8 +43,11 @@ task("deploy",
     ]
 )
 
+artifacts = storage_resource("jenkins-artifacts")
+
 task("run-jenkins",
     inputs=["deploy"],
+    outputs=[artifacts],
     steps=[
         k8s.corev1.Container(
             name="submit-build",
@@ -70,6 +73,7 @@ task("run-jenkins",
                 echo
                 
                 curl -s -u $USERNAME:$PASSWORD $executable/artifact/*zip*/archive.zip -o archive.zip
+                tar xvf archive.zip $(resources.outputs.artifacts.path)
             """],
             env=[
                 k8s.corev1.EnvVar(
