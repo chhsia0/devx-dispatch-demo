@@ -73,8 +73,8 @@ task("run-jenkins",
                 echo
                 
                 curl -s -u $USERNAME:$PASSWORD $executable/artifact/*zip*/archive.zip -o archive.zip
-                tar xvf archive.zip $(resources.outputs.artifacts.path)
-            """],
+                tar xvf archive.zip $(resources.outputs.{}.path)
+            """.format(artifacts)],
             env=[
                 k8s.corev1.EnvVar(
                     name="USERNAME",
