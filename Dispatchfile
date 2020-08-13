@@ -51,22 +51,25 @@ task("run-jenkins",
             image="chhsiao/alpine",
             command=["sh", "-c", """
                 location=$(
-                    curl -s -u $USERNAME:$PASSWORD -X POST -I https://jenkins.mesosphere.com/service/jenkins/job/dispatch-remote-test-pipeline/build |
+                    curl -s -u $USERNAME:$PASSWORD -X POST -I \
+                        https://jenkins.mesosphere.com/service/jenkins/job/dispatch-remote-test-pipeline/build |
                         sed -n -E "s#^Location: (.*)/.*#\\1/api/json#p"
                 )
                 echo $location
-                executable=$(
-                    while ! curl -s -u $USERNAME:$PASSWORD $location |
-                         jq -r -e '.executable.url' > /dev/null; do
-                         sleep 1
-                    done
-                )
-                echo $executable
-                while curl -s -u $USERNAME:$PASSWORD $executable/api/json |
-                    jq -e .building > /dev/null; do
-                    sleep 1
+
+                echo -n Pending
+                while ! executable=$(curl -s -u $USERNAME:$PASSWORD $location | jq -r -e '.executable.url'); do
+                    echo -n . && sleep 1
                 done
-                curl -s -u $USERNAME:$PASSWORD $executable/api/json | jq .
+                echo && echo $executable
+
+                echo -n Running
+                while curl -s -u $USERNAME:$PASSWORD $executable/api/json | jq -e .building > /dev/null; do
+                    echo -n . && sleep 1
+                done
+                echo
+                
+                curl -s -u $USERNAME:$PASSWORD $executable/artifact/*zip*/archive.zip -o archive.zip
             """],
             env=[
                 k8s.corev1.EnvVar(
