@@ -32,7 +32,13 @@ task("deploy",
         k8s.corev1.Container(
             name="wait",
             image="lachlanevenson/k8s-kubectl",
-            args=["get", "deployment/hello-world", "--output=jsonpath={.spec.template.spec.containers[0].image}"]
+            command=["sh", "-c", """
+                GET_DEPLOYMENT_IMAGE="kubectl get deployment/hello-world --output=jsonpath={.spec.template.spec.containers[0].image}"
+                while [ "$($GET_DEPLOYMENT_IMAGE)" != "{}" ]; do
+                    sleep 1
+                done
+                kubectl wait --for=condition=available deployment/hello-world
+            """.format(image_reference(docker_image))]
         )
     ]
 )
