@@ -28,15 +28,11 @@ task("deploy",
                 "-merge-pull-request",
                 "-substitute=imageName={}".format(image_reference(docker_image))
             ]
-        )
-    ]
-)
-
-dind_task("wait-deploy", inputs=["deploy"], steps=[
+        ),
         k8s.corev1.Container(
             name="wait",
-            image="mesosphere/dispatch-integration-test:1.3.0-beta1",
-            args=["dispatch", "gitops", "app", "wait", "--sync", "jenkins-demo"]
+            image="lachlanevenson/k8s-kubectl",
+            args=["get", "deployment/hello-world", "--output=jsonpath={.spec.template.spec.containers[0].image}"]
         )
     ]
 )
