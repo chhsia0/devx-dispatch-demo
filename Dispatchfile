@@ -43,4 +43,43 @@ task("deploy",
     ]
 )
 
-action(tasks=["deploy"], on=push(branches=["jenkins-demo"]))
+task("run-jenkins",
+    inputs=["deploy"],
+    steps=[
+        k8s.corev1.Container(
+            name="submit-build",
+            image="chhsiao/alpine",
+            command=["sh", "-c", """
+                location=$(
+                    curl -s -u $USERNAME:$PASSWORD -X POST -I https://jenkins.mesosphere.com/service/jenkins/job/dispatch-remote-test-pipeline/build |
+                        sed -n -E "s#^Location: (.*)/.*#\\1/api/json#p"
+                )
+                echo $location
+                executable=$(
+                    while ! curl -s -u $USERNAME:$PASSWORD $location |
+                         jq -r -e '.executable.url'; do
+                         sleep 1
+                    done
+                )
+                echo $executable
+                while curl -s -u $USERNAME:$PASSWORD $executable/api/json |
+                    jq -e .building; do
+                    sleep 1
+                done
+                curl -s -u $USERNAME:$PASSWORD $executable/api/json | jq .
+            """],
+            env=[
+                k8s.corev1.EnvVar(
+                    name="USERNAME",
+                    valueFrom=secret_var("jenkins-secret", "username")
+                ),
+                k8s.corev1.EnvVar(
+                    name="PASSWORD",
+                    valueFrom=secret_var("jenkins-secret", "password")
+                )
+            ]
+        )
+    ]
+)
+
+action(tasks=["run-jenkins"], on=push(branches=["jenkins-demo"]))
