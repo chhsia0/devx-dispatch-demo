@@ -33,7 +33,7 @@ task("deploy",
             image="lachlanevenson/k8s-kubectl:latest",
             args=[
                 "get",
-                "applications",
+                "application/jenkins-demo",
                 "--namespace=dispatch"
             ]
         )
