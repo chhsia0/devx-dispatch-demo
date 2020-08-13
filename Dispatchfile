@@ -27,6 +27,15 @@ task("deploy",
                 "-merge-pull-request",
                 "-substitute=imageName={}".format(image_reference(docker_image))
             ]
+        ),
+        k8s.corev1.Container(
+            name="wait-for-deployment",
+            image="lachlanevenson/k8s-kubectl:latest",
+            args=[
+                "get",
+                "applications",
+                "--namespace=dispatch"
+            ]
         )
     ]
 )
