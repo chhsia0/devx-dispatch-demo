@@ -33,7 +33,7 @@ task("deploy",
             name="wait",
             image="lachlanevenson/k8s-kubectl",
             command=["sh", "-c", """
-                GET_DEPLOYMENT_IMAGE="kubectl get deployment/hello-world --output=jsonpath={.spec.template.spec.containers[0].image}"
+                GET_DEPLOYMENT_IMAGE="kubectl get deployment/hello-world --output=jsonpath={{.spec.template.spec.containers[0].image}}"
                 while [ "$($GET_DEPLOYMENT_IMAGE)" != "{}" ]; do
                     sleep 1
                 done
