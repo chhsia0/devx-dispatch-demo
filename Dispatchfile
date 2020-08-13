@@ -13,7 +13,7 @@ gitops_repo = git_resource("gitops-repo",
 
 docker_image = kaniko("build-image", src_repo, "chhsiao/devx-dispatch-demo")
 
-task("deploy",
+dind_task("deploy",
     inputs=[src_repo, docker_image, gitops_repo],
     steps=[
         k8s.corev1.Container(
