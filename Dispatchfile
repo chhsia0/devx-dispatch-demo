@@ -51,7 +51,7 @@ def kaniko2(task_name, git_name, image_repos, tag="$(context.build.name)", conte
 
     return image_names
 
-docker_images = kaniko("build-image", src_repo, ["chhsiao/devx-dispatch-demo", "chhsiao/devx-dispatch-demo-2")
+docker_images = kaniko("build-image", src_repo, ["chhsiao/devx-dispatch-demo", "chhsiao/devx-dispatch-demo-2"])
 
 task("deploy",
     inputs=[src_repo, docker_image[0], gitops_repo],
