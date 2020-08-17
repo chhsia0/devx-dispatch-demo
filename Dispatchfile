@@ -12,10 +12,49 @@ gitops_repo = git_resource("gitops-repo",
     revision="jenkins-demo"
 )
 
-docker_image = kaniko("build-image", src_repo, "chhsiao/devx-dispatch-demo")
+def kaniko2(task_name, git_name, image_repos, tag="$(context.build.name)", context=".", dockerfile="Dockerfile", build_args={}, inputs=[], outputs=[], steps=[], **kwargs):
+    """
+    Build a Docker image using Kaniko.
+    """
+
+    image_names = [
+        image_resource(
+            "image{}-{}".format(i, task_name),
+            url=image_repos[i]
+        ) for i in range(len(image_repos))
+    ]
+
+    inputs = inputs + [git_name]
+    outputs = outputs + image_names
+
+    args = [
+        "--context={}".format(context),
+        "--dockerfile={}".format(dockerfile)
+    ]
+
+    for k, v in build_args.items():
+        args.append("--build-arg={}={}".format(k, v))
+
+    steps = steps + [
+        k8s.corev1.Container(
+            name="build",
+            image="gcr.io/kaniko-project/executor:latest",
+            args=args + [
+                "--destination=$(resources.outputs.{}.url):{}".format(image_name, tag),
+                "--oci-layout-path=$(resources.outputs.{}.path)".format(image_name)
+            ],
+            workingDir=git_checkout_dir(git_name)
+        ) for image_name in image_names
+    ]
+
+    task(task_name, inputs=inputs, outputs=outputs, steps=steps, **kwargs)
+
+    return image_names
+
+docker_images = kaniko("build-image", src_repo, ["chhsiao/devx-dispatch-demo", "chhsiao/devx-dispatch-demo-2")
 
 task("deploy",
-    inputs=[src_repo, docker_image, gitops_repo],
+    inputs=[src_repo, docker_image[0], gitops_repo],
     steps=[
         k8s.corev1.Container(
             name="update-gitops-repo",
@@ -89,4 +128,4 @@ task("run-jenkins",
     ]
 )
 
-action(tasks=["run-jenkins"], on=push(branches=["jenkins-demo"]))
+action(tasks=["build-image"], on=push())
