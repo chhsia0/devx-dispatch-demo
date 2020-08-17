@@ -2,7 +2,7 @@
 
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/k8s@0.0.7", "secret_var")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/kaniko@0.0.7", "kaniko")
-load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "image_reference", "storage_resource", "push")
+load("github.com/mesosphere/dispatch-catalog/starlark/stable/pipeline@0.0.7", "image_resource", "image_reference", "storage_resource", "push")
 load("github.com/mesosphere/dispatch-catalog/starlark/stable/git@0.0.7", "git_resource", "git_checkout_dir", "git_revision")
 
 src_repo = git_resource("src-repo")
