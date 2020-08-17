@@ -37,7 +37,7 @@ def kaniko2(task_name, git_name, image_repos, tag="$(context.build.name)", conte
 
     steps = steps + [
         k8s.corev1.Container(
-            name="build",
+            name="build-{}".format(image_name),
             image="gcr.io/kaniko-project/executor:latest",
             args=args + [
                 "--destination=$(resources.outputs.{}.url):{}".format(image_name, tag),
