@@ -65,7 +65,7 @@ task("deploy",
                 "-base-branch={}".format(git_revision(gitops_repo)),
                 "-create-pull-request",
                 "-merge-pull-request",
-                "-substitute=imageName={}".format(image_reference(docker_image))
+                "-substitute=imageName={}".format(image_reference(docker_images[0]))
             ]
         ),
         k8s.corev1.Container(
@@ -77,7 +77,7 @@ task("deploy",
                     sleep 1
                 done
                 kubectl wait --for=condition=available deployment/hello-world
-            """.format(image_reference(docker_image))]
+            """.format(image_reference(docker_images[0]))]
         )
     ]
 )
