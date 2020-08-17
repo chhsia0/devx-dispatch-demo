@@ -54,7 +54,7 @@ def kaniko2(task_name, git_name, image_repos, tag="$(context.build.name)", conte
 docker_images = kaniko("build-image", src_repo, ["chhsiao/devx-dispatch-demo", "chhsiao/devx-dispatch-demo-2"])
 
 task("deploy",
-    inputs=[src_repo, docker_image[0], gitops_repo],
+    inputs=[src_repo, docker_images[0], gitops_repo],
     steps=[
         k8s.corev1.Container(
             name="update-gitops-repo",
