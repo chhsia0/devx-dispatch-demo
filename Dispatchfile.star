@@ -22,7 +22,7 @@ task("unit-test",
         image="golang:1.13.0-buster",
         command=["go", "test", "./..."],
         workingDir="/workspace/src-repo",
-        env=[v1.EnvVar(name="SLEEP_DURATION", value="5s")]
+        env=[v1.EnvVar(name="SLEEP_DURATION", value="1s")]
     )]
 )
 
@@ -49,7 +49,7 @@ task("integration-test",
         name="run-test",
         image="$(inputs.resources.docker-image.url)@$(inputs.resources.docker-image.digest)",
         command=["/hello-app.test"],
-        env=[v1.EnvVar(name="SLEEP_DURATION", value="5s")]
+        env=[v1.EnvVar(name="SLEEP_DURATION", value="1s")]
     )]
 )
 
