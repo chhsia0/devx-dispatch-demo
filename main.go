@@ -57,7 +57,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `
 		<html>
 		<head><title>Hello, world!</title></head>
-		<body><p style="font-size:36px;font-family:'Courier New'">
+		<body><p style="font-size:36px;font-family:monospace">
 		Hello, world!<br>
 		Version: %s<br>
 		Build time: %s<br>
