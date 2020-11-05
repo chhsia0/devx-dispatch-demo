@@ -37,4 +37,5 @@ task("deploy",
 )
 
 action(tasks=["deploy"], on=push(branches=["master"]))
-action(tasks=["test"], on=pull_request(chatops=["test"]))
+action(tasks=["test"], on=pull_request(targets=["master"]))
+action(tasks=["test"], on=pull_request(targets=["master"], chatops=["test"]))
