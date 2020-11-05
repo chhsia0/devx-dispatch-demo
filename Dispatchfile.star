@@ -24,7 +24,7 @@ task("test",
 )
 
 task("deploy",
-    inputs=[docker_image, gitops_repo, test],
+    inputs=[docker_image, gitops_repo, "test"],
     steps=[v1.Container(
         name="update-gitops",
         image="mesosphere/update-gitops-repo:1.3.0",
