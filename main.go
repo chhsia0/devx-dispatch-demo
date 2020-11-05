@@ -61,7 +61,7 @@ func hello(w http.ResponseWriter, r *http.Request) {
 		Hello, world!<br>
 		Version: %s<br>
 		Build time: %s<br>
-		Welcome to Dispatch
+		Dispatch CI/CD Demo
 		</p></body>
 		</html>
 	`, Version, Buildtime)
