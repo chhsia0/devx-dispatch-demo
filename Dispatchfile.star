@@ -6,13 +6,12 @@ gitResource("src-repo",
 )
 
 gitResource("gitops-repo",
-    url="https://github.com/mesosphere/devx-dispatch-gitops-demo",
+    url="https://github.com/chhsia0/devx-dispatch-gitops-demo",
     revision="master"
 )
 
 imageResource("docker-image",
-    url="mesosphere/devx-dispatch-demo",
-    digest=""
+    url="chhsiao/devx-dispatch-demo"
 )
 
 task("unit-test",
