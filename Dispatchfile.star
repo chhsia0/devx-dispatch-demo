@@ -39,3 +39,4 @@ task("deploy",
 action(tasks=["deploy"], on=push(branches=["master"]))
 action(tasks=["test"], on=pull_request(targets=["master"]))
 action(tasks=["test"], on=pull_request(targets=["master"], chatops=["test"]))
+action(tasks=["deploy"], on=p.Condition(release=p.ReleaseCondition(tags=["0.0.*"])))
